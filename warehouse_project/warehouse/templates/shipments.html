@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% block title %}Shipments{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold text-white mb-6">Shipment List</h1>
+
+<div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+  <form method="get" class="flex flex-wrap gap-2 flex-grow">
+    <input
+      type="text"
+      name="search"
+      placeholder="Search shipments..."
+      value="{{ request.GET.search|default:'' }}"
+      class="w-full md:w-64 px-4 py-2 rounded bg-gray-800 text-white placeholder-gray-400 focus:outline-none focus:ring focus:ring-blue-500 transition"
+    />
+    <button
+      type="submit"
+      class="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 transition"
+    >
+      Filter
+    </button>
+  </form>
+
+  <button data-modal-target="addShipmentModal"
+          data-modal-toggle="addShipmentModal"
+          class="flex items-center gap-2 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-white font-semibold rounded shadow-md transition focus:outline-none focus:ring-2 focus:ring-cyan-400">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+    </svg>
+    Add Shipment
+  </button>
+</div>
+
+<div class="overflow-x-auto">
+  <table class="w-full table-auto bg-gray-800 text-white rounded-md text-sm">
+    <thead class="bg-gray-700 text-gray-300">
+      <tr>
+        <th class="px-4 py-2 text-left">Date</th>
+        <th class="px-4 py-2 text-left">Client</th>
+        <th class="px-4 py-2 text-center">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="bg-gray-800 divide-y divide-gray-700">
+      {% for shipment in shipments %}
+        <tr class="hover:bg-gray-700 transition">
+          <td class="px-4 py-2">{{ shipment.date|date:"Y-m-d H:i" }}</td>
+          <td class="px-4 py-2">{{ shipment.client }}</td>
+          <td class="px-4 py-2 text-center space-x-2">
+            <a href="{% url 'shipment_detail' shipment.pk %}"
+               class="px-2 py-1 rounded bg-blue-600 text-white text-xs hover:bg-blue-700 transition">
+              View
+            </a>
+            <a href="{% url 'delete_shipment' shipment.pk %}"
+               class="px-2 py-1 rounded bg-red-600 text-white text-xs hover:bg-red-700 transition">
+              Delete
+            </a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="3" class="text-center py-4 text-gray-400">No shipments found.</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if shipments.has_other_pages %}
+  <div class="flex justify-center mt-6 space-x-2">
+    {% if shipments.has_previous %}
+      <a href="?page={{ shipments.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+         class="px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition">Previous</a>
+    {% endif %}
+    <span class="px-3 py-1 bg-green-600 text-white rounded">Page {{ shipments.number }} of {{ shipments.paginator.num_pages }}</span>
+    {% if shipments.has_next %}
+      <a href="?page={{ shipments.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}"
+         class="px-3 py-1 bg-gray-700 text-white rounded hover:bg-gray-600 transition">Next</a>
+    {% endif %}
+  </div>
+{% endif %}
+
+<div id="addShipmentModal" tabindex="-1" aria-hidden="true" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50 p-4 overflow-y-auto">
+  <div class="relative w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-lg">
+    <div class="flex items-start justify-between p-4 border-b dark:border-gray-700">
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Add New Shipment</h3>
+      <button type="button" data-modal-hide="addShipmentModal" class="text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-lg p-1.5">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <form method="POST" action="{% url 'shipments' %}">
+    {% csrf_token %}
+    <div>
+        <label for="{{ form.client.id_for_label }}" class="block mb-1 text-sm font-medium text-gray-900 dark:text-gray-200">Client</label>
+        {{ form.client|add_class:"w-full px-3 py-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white" }}
+    </div>
+
+    <div>
+        <label for="{{ form.client_address.id_for_label }}" class="block mb-1 text-sm font-medium text-gray-900 dark:text-gray-200">Client Address</label>
+        {{ form.client_address|add_class:"w-full px-3 py-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white" }}
+    </div>
+
+    <div>
+        <label for="{{ form.client_phone.id_for_label }}" class="block mb-1 text-sm font-medium text-gray-900 dark:text-gray-200">Client Phone</label>
+        {{ form.client_phone|add_class:"w-full px-3 py-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white" }}
+    </div>
+
+    <div>
+        <label for="{{ form.client_email.id_for_label }}" class="block mb-1 text-sm font-medium text-gray-900 dark:text-gray-200">Client Email</label>
+        {{ form.client_email|add_class:"w-full px-3 py-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white" }}
+    </div>
+
+    <div>
+        <label for="{{ form.payment_status.id_for_label }}" class="block mb-1 text-sm font-medium text-gray-900 dark:text-gray-200">Payment Status</label>
+        {{ form.payment_status|add_class:"w-full px-3 py-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white" }}
+    </div>
+
+    <div>
+        <label for="{{ form.delivery_date.id_for_label }}" class="block mb-1 text-sm font-medium text-gray-900 dark:text-gray-200">Delivery Date</label>
+        {{ form.delivery_date|add_class:"w-full px-3 py-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white" }}
+    </div>
+
+    <div>
+        <label for="{{ form.shipping_method.id_for_label }}" class="block mb-1 text-sm font-medium text-gray-900 dark:text-gray-200">Shipping Method</label>
+        {{ form.shipping_method|add_class:"w-full px-3 py-2 rounded bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white" }}
+    </div>
+
+    <button type="submit" class="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded">Save Shipment</button>
+</form>
+  </div>
+</div>
+
+{% endblock %}

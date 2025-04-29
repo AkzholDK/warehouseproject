@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load widget_tweaks %}
+{% load math_tags %}
+
+{% block title %}Shipment Detail{% endblock %}
+
+{% block content %}
+<h1 class="text-2xl font-bold text-white mb-6">Shipment Details</h1>
+
+<div class="bg-gray-800 text-white p-6 rounded-md">
+    <h2 class="text-xl font-semibold">Client: {{ shipment.client }}</h2>
+    <p><strong>Address:</strong> {{ shipment.client_address }}</p>
+    <p><strong>Phone:</strong> {{ shipment.client_phone }}</p>
+    <p><strong>Email:</strong> {{ shipment.client_email }}</p>
+    <p><strong>Payment Status:</strong> {{ shipment.payment_status }}</p>
+    <p><strong>Delivery Date:</strong> {{ shipment.delivery_date|date:"Y-m-d" }}</p>
+    <p><strong>Shipping Method:</strong> {{ shipment.shipping_method }}</p>
+</div>
+
+<h3 class="text-lg font-semibold text-white mt-6">Items in the Shipment</h3>
+<div class="overflow-x-auto bg-gray-800 p-4 rounded-md">
+    <table class="w-full table-auto bg-gray-800 text-white rounded-md text-sm">
+        <thead class="bg-gray-700 text-gray-300">
+            <tr>
+                <th class="px-4 py-2 text-left">Product</th>
+                <th class="px-4 py-2 text-left">Quantity</th>
+                <th class="px-4 py-2 text-left">Price</th>
+                <th class="px-4 py-2 text-left">Total</th>
+            </tr>
+        </thead>
+        <tbody class="bg-gray-800 divide-y divide-gray-700">
+            {% for item in shipment.items.all %}
+                <tr class="hover:bg-gray-700 transition">
+                    <td class="px-4 py-2">{{ item.product.name }}</td>
+                    <td class="px-4 py-2">{{ item.quantity }}</td>
+                    <td class="px-4 py-2">{{ item.product.price|floatformat:2 }}</td>
+                    <td class="px-4 py-2">{{ item.quantity|multiply:item.product.price|floatformat:2 }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="flex justify-between mt-6">
+    <div class="text-white">
+        <strong>Total Price:</strong> {{ total_price|floatformat:2 }}
+    </div>
+    <a href="{% url 'shipments' %}" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md">Back to Shipments</a>
+</div>
+{% endblock %}

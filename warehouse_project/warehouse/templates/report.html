@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Отчёты - Система управления складом{% endblock %}
+
+{% block content %}
+    <h2>Отчёты</h2>
+
+    <h3>Текущие остатки</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Товар</th>
+                <th>Остаток</th>
+                <th>Минимум</th>
+                <th>Статус</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for product in products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.quantity }}</td>
+                    <td>{{ product.min_quantity }}</td>
+                    <td>
+                        {% if product.quantity < product.min_quantity %}
+                            ⚠️ Низкий уровень
+                        {% else %}
+                            ✅ Ок
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>Популярные товары</h3>
+    <ol>
+        {% for item in top_products %}
+            <li>{{ item.product__name }} — {{ item.total_shipped }} шт.</li>
+        {% endfor %}
+    </ol>
+
+    <a href="{% url 'download_report_pdf' %}">Скачать отчёт в PDF</a>
+{% endblock %}

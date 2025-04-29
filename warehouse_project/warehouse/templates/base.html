@@ -1,0 +1,47 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Warehouse{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-white transition-colors duration-300">
+
+  <div id="navbar" class="fixed top-0 left-0 w-full bg-gray-900 dark:bg-gray-800 text-white shadow">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <h1 class="text-xl font-bold text-blue-400">Warehouse System</h1>
+
+      <nav class="flex items-center gap-6 text-sm">
+        <a href="{% url 'dashboard' %}" class="hover:text-blue-300">Dashboard</a>
+        <a href="{% url 'products' %}" class="hover:text-blue-300">Products</a>
+        <a href="{% url 'supplies' %}" class="hover:text-blue-300">Supplies</a>
+        <a href="{% url 'shipments' %}" class="hover:text-blue-300">Shipments</a>
+        <a href="{% url 'notifications' %}" class="hover:text-blue-300">Notifications</a>
+
+        {% if user.is_authenticated %}
+          <a href="{% url 'logout' %}" class="text-red-400 hover:text-red-300">Logout</a>
+        {% else %}
+          <a href="{% url 'login' %}" class="text-green-400 hover:text-green-300">Login</a>
+        {% endif %}
+
+        <button onclick="document.documentElement.classList.toggle('dark')" class="px-2 py-1 bg-gray-200 dark:bg-gray-700 rounded">
+          Toggle Theme
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 py-6 pt-20">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="text-center text-xs text-gray-500 dark:text-gray-400 py-6 border-t border-gray-700 mt-12">
+    &copy; 2025 Warehouse Management System. All rights reserved.
+  </footer>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/flowbite/dist/flowbite.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Notifications</h2>
+  <ul>
+    {% for notif in notifications %}
+      <li style="{% if not notif.is_read %}font-weight:bold;{% endif %}">
+        {{ notif.message }} — {{ notif.created_at|date:"d M Y H:i" }}
+        {% if not notif.is_read %}
+          <a href="{% url 'mark_as_read' notif.id %}">[Read]</a>
+        {% endif %}
+        <a href="{% url 'delete_notification' notif.id %}">[Delete]</a>
+      </li>
+    {% empty %}
+      <p>You don't have any notifications.</p>
+    {% endfor %}
+  </ul>
+{% endblock %}

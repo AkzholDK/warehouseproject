@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="text-white px-4 py-6">
+  <h1 class="text-3xl font-semibold mb-8">Notifications</h1>
+
+  <div class="bg-gray-800 rounded-xl p-6 shadow">
+    <h2 class="text-xl font-semibold text-white mb-4">All Notifications</h2>
+
+    {% if notifications %}
+      <ul class="space-y-4">
+        {% for notif in notifications %}
+          <li class="flex justify-between items-start p-4 rounded-lg {% if not notif.is_read %}bg-gray-700{% else %}bg-gray-900{% endif %} shadow">
+            <div>
+              <p class="text-sm {% if not notif.is_read %}text-white font-semibold{% else %}text-gray-400{% endif %}">
+                {{ notif.message }}
+              </p>
+              <p class="text-xs text-gray-500 mt-1">{{ notif.created_at|date:"d M Y H:i" }}</p>
+            </div>
+            <div class="flex gap-2 items-center">
+              {% if not notif.is_read %}
+                <a href="{% url 'mark_as_read' notif.id %}" class="text-xs bg-green-600 text-white px-2 py-1 rounded hover:bg-green-700 transition">Mark as read</a>
+              {% endif %}
+              <a href="{% url 'delete_notification' notif.id %}" class="text-xs bg-red-600 text-white px-2 py-1 rounded hover:bg-red-700 transition">Delete</a>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="text-gray-500 text-sm">No notifications found.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

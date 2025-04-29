@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Детали поставки - Система управления складом{% endblock %}
+
+{% block content %}
+    <h2>Детали поставки</h2>
+    <p><strong>Дата:</strong> {{ supply.date }}</p>
+    <p><strong>Поставщик:</strong> {{ supply.supplier }}</p>
+    <h3>Товары:</h3>
+    <ul>
+        {% for item in supply.items.all %}
+            <li>{{ item.product.name }} - {{ item.quantity }} шт.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'supplies' %}">Вернуться к списку поставок</a>
+{% endblock %}
